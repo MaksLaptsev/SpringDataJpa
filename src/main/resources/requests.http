@@ -1,0 +1,47 @@
+### Save Payment type "Phone"
+POST http://localhost:8080/payments
+Accept: application/json
+Content-Type: application/json
+
+{
+  "paymentFrom": "375295556021",
+  "paymentTo": "37533464684",
+  "paymentType": "PHONE"
+}
+
+### Save PaymentByERIP type "ERIP"
+POST http://localhost:8080/payments
+Accept: application/json
+Content-Type: application/json
+
+{
+  "paymentFrom": "12551234",
+  "paymentTo": "77562246",
+  "paymentType": "ERIP",
+  "params": {
+    "valueForInsertion": "123561132",
+    "fieldForInsertion": "Insertion field"
+  }
+}
+
+### Save PaymentByRequisite type "REQUISITE"
+POST http://localhost:8080/payments
+Accept: application/json
+Content-Type: application/json
+
+{
+  "paymentFrom": "22245632",
+  "paymentTo": "1235124",
+  "paymentType": "REQUISITE",
+  "params": {
+    "unp": "Za vse plohoe",
+    "receiver": "OOO nashe delo",
+    "destination": "25542354"
+  }
+}
+
+### Get all Payments
+GET http://localhost:8080/payments/all
+
+### Get Payment by id
+GET http://localhost:8080/payments/4
