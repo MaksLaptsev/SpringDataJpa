@@ -1,13 +1,12 @@
 package ru.clevertec.springdatajpa.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.clevertec.springdatajpa.beans.Initial;
+import ru.clevertec.springdatajpa.dto.PaymentRequest;
 import ru.clevertec.springdatajpa.dto.PaymentResponse;
-import ru.clevertec.springdatajpa.model.Payment;
 import ru.clevertec.springdatajpa.service.PaymentService;
-
 import java.util.List;
 
 @RestController
@@ -16,8 +15,6 @@ import java.util.List;
 public class PaymentController {
 
     private final PaymentService paymentService;
-    private final Initial initial;
-
 
     @GetMapping("/{id}")
     public ResponseEntity<PaymentResponse> findById(@PathVariable Long id) {
@@ -25,14 +22,13 @@ public class PaymentController {
     }
 
     @PostMapping
-    public void save(){
-        for (Payment payment: initial.getPayments()){
-            paymentService.save(payment);
-        }
+    public ResponseEntity<PaymentResponse> save(@RequestBody PaymentRequest request){
+        return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.save(request));
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<PaymentResponse>> findAll(){
         return ResponseEntity.ok(paymentService.getAll());
     }
+
 }

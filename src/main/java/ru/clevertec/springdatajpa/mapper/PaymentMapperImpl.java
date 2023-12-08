@@ -2,6 +2,7 @@ package ru.clevertec.springdatajpa.mapper;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import ru.clevertec.springdatajpa.dto.PaymentRequest;
 import ru.clevertec.springdatajpa.dto.PaymentResponse;
 import ru.clevertec.springdatajpa.model.Payment;
 
@@ -13,8 +14,8 @@ public class PaymentMapperImpl implements PaymentMapper<Payment>{
     }
 
     @Override
-    public Payment fromRequest() {
-        return null;
+    public Payment fromRequest(PaymentRequest request) {
+        return new Payment(request.id(), request.paymentFrom(), request.paymentTo(), request.paymentType());
     }
 
     @Override

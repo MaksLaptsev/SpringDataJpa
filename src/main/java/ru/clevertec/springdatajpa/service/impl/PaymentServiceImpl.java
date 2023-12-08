@@ -2,10 +2,11 @@ package ru.clevertec.springdatajpa.service.impl;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.clevertec.springdatajpa.dto.PaymentRequest;
 import ru.clevertec.springdatajpa.dto.PaymentResponse;
+import ru.clevertec.springdatajpa.exceptions.PaymentNotFoundException;
+import ru.clevertec.springdatajpa.exceptions.PaymentSaveException;
 import ru.clevertec.springdatajpa.mapper.PaymentMapper;
 import ru.clevertec.springdatajpa.model.Payment;
 import ru.clevertec.springdatajpa.model.PaymentByERIP;
@@ -37,14 +38,14 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponse findById(Long id) {
         return paymentRepository.findById(id)
                 .map(this::getResponse)
-                .orElseThrow();
+                .orElseThrow(()->new PaymentNotFoundException("Payment with id: %s not found".formatted(id)));
     }
 
     @Override
-    public PaymentResponse save(Payment payment) {
-        return Optional.of(paymentRepository.saveAndFlush(payment))
+    public PaymentResponse save(PaymentRequest request) {
+        return Optional.of(paymentRepository.saveAndFlush(objectFromRequest(request)))
                 .map(this::getResponse)
-                .orElseThrow();
+                .orElseThrow(()->new PaymentSaveException("failed to save: %s".formatted(request)));
     }
 
     @Override
@@ -64,6 +65,20 @@ public class PaymentServiceImpl implements PaymentService {
             }
             default -> {
                 return mapperMap.get(Payment.class).toResponse(p);
+            }
+        }
+    }
+
+    private Payment objectFromRequest(PaymentRequest request){
+        switch (request.paymentType()){
+            case ERIP -> {
+                return (PaymentByERIP) mapperMap.get(PaymentByERIP.class).fromRequest(request);
+            }
+            case REQUISITE -> {
+                return (PaymentByRequisite) mapperMap.get(PaymentByRequisite.class).fromRequest(request);
+            }
+            default -> {
+                return (Payment) mapperMap.get(Payment.class).fromRequest(request);
             }
         }
     }

@@ -2,7 +2,9 @@ package ru.clevertec.springdatajpa.mapper;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import ru.clevertec.springdatajpa.dto.PaymentRequest;
 import ru.clevertec.springdatajpa.dto.PaymentResponse;
+import ru.clevertec.springdatajpa.exceptions.InvalidParamsException;
 import ru.clevertec.springdatajpa.model.PaymentByERIP;
 import java.util.Map;
 
@@ -15,8 +17,15 @@ public class PaymentByERIPImpl implements PaymentMapper<PaymentByERIP>{
     }
 
     @Override
-    public PaymentByERIP fromRequest() {
-        return null;
+    public PaymentByERIP fromRequest(PaymentRequest request) {
+        if (!request.params().isEmpty()){
+            return new PaymentByERIP(request.id(),request.paymentFrom(),request.paymentTo(),request.paymentType()
+                    ,request.params().get("fieldForInsertion"),request.params().get("valueForInsertion"));
+        }else {
+            throw new InvalidParamsException("In Payment with type %s , params - must be not null"
+                    .formatted(request.paymentType()));
+        }
+
     }
 
     @Override
